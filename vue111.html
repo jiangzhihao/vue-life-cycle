@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+	<div id="app">
+		{{message}}
+		<button @click='setMessage'>改变message</button>
+		<button @click='destroy'>销毁根组件</button>
+	</div>
+</body>
+<script>
+	var app = new Vue({
+		el: '#app',
+		data: {
+			message: 111
+		},
+		methods: {
+			setMessage() {
+				this.message = 222222;
+			},
+			destroy() {
+				this.$destroy();
+			}
+		},
+		beforeCreate() {
+			console.group('beforeCreate 创建前状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		created() {
+			console.group('created 创建完毕状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		beforeMount() {
+			console.group('beforeMount 挂载前状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		mounted() {
+			console.group('mounted 挂载结束状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		beforeUpdate() {
+			console.group('beforeUpdate 更新前状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		updated() {
+			console.group('updated 更新完成状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		beforeDestroy() {
+			console.group('beforeDestory 销毁前状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		},
+		destroyed() {
+			console.group('destoryed 销毁完成状态================');
+			console.log('el', this.$el);
+			console.log('data', this.$data);
+			console.log('message', this.message);
+		}
+	})
+	
+</script>
+</html>

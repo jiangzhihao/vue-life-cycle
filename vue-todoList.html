@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	 crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+	<div id="app" class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<form class="form-inline">
+					<input class="pull-left form-control" type="text" v-model="todoItem" />
+					<button class='btn btn-primary pull-right' @click.prevent='addItem'>添加事项</button>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class="panel-title clearfix">
+							任务列表
+							<div class="btn-group btn-group-sm pull-right">
+								<button @click='showAll' type="button" class="btn btn-default">全部</button>
+								<button @click='showFinished' type="button" class="btn btn-default">已完成</button>
+								<button @click='showUnFinished' type="button" class="btn btn-default">未完成</button>
+							</div>
+						</h3>
+					</div>
+					<ul class="list-group">
+						<item v-for='(item, index) in items' 
+							:item='item' 
+							:index='index' 
+							:key='Math.random()' 
+							@change-state='changeStateByIndex' 
+							@delete-item='deleteByIndex'
+							@select-item='selectItemByIndex'
+							v-show='item.isShow'>
+						</item>
+						<li class="list-group-item clearfix"><button class="btn btn-sm btn-danger pull-right" @click='deleteSelected'>删除所选</button></li>
+						<li class="list-group-item">共{{totalNum}}项，已完成{{finishedNum}}项，未完成{{unFinished}}项</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		let item = {
+			props: ['item', 'index'],
+			data() {
+				return {
+					buttonContent: '改为已完成',
+					classObj: {
+						'btn': true,
+						'pull-right': true,
+						'btn-success': !item.isFinished,
+						'btn-warning': item.isFinished
+					}
+				}
+			},
+			template: `
+				<li class='clearfix list-group-item'>
+					<span>{{item.isFinished ? '已完成' : '未完成'}}</span>
+					<label><input type="checkbox" @click='selectItem' />{{item.content}}</label>
+					<button class='btn btn-danger pull-right' @click='deleteSelf'>删除</button>
+					<button :class='classObj' @click='changeItemState'>{{buttonContent}}</button>
+				</li>
+			`,
+			watch: {
+				item: {
+					handler: function (newValue, oldValue) {
+						let value = newValue.isFinished;
+						this.buttonContent = value ? '改为未完成' : '改为已完成';
+						this.classObj = {
+							...this.classObj,
+							'btn': true,
+							'btn-success': !value,
+							'btn-warning': value
+						}
+					},
+					deep: true
+				}
+			},
+			methods: {
+				changeItemState() {
+					this.$emit('change-state', this.index);
+				},
+				deleteSelf() {
+					this.$emit('delete-item', this.index);
+				},
+				selectItem() {
+					this.$emit('select-item' ,this.index);
+				}
+			}
+		}
+		new Vue({
+			el: '#app',
+			components: {
+				item
+			},
+			data: {
+				isShowFinished: false,
+				isShowAll: true,
+				isShowUnFinished: false,
+				todoItem: '',
+				items: [
+					{
+						content: '任务内容',
+						isFinished: false,
+						isShow: true,
+						isSelected: false
+					},
+					{
+						content: '任务内容22',
+						isFinished: false,
+						isShow: true,
+						isSelected: false
+					},
+					{
+						content: '任务内容33',
+						isFinished: false,
+						isShow: true,
+						isSelected: false
+					}
+				]
+			},
+			watch: {
+				isShowAll(newValue) {
+					if (newValue) {
+						this.items.forEach((val, index) => {
+							val.isShow = true
+						})
+					}
+				},
+				isShowFinished(newValue) {
+					if(newValue) {
+						this.items.forEach((val, index) => {
+							val.isFinished ? (val.isShow = true) : (val.isShow = false)
+						})
+					}
+				},
+				isShowUnFinished(newValue) {
+					if(newValue) {
+						this.items.forEach((val, index) => {
+							val.isFinished ? (val.isShow = false) : (val.isShow = true)
+						})
+					}
+				}
+			},
+			computed: {
+				totalNum() {
+					return this.items.length;
+				},
+				finishedNum() {
+					let i = 0;
+					this.items.forEach((val) => {
+						if (val.isFinished) {
+							i++;
+						}
+					})
+					return i; 
+				},
+				unFinished() {
+					let i = 0;
+					this.items.forEach((val) => {
+						if (!val.isFinished) {
+							i++;
+						}
+					})
+					return i; 
+				}
+			},
+			methods: {
+				addItem() {
+					this.items.push({
+						content: this.todoItem,
+						isFinished: false,
+						isShow: true,
+						isSelected: false
+					})
+				},
+				changeStateByIndex: function (index) {
+					this.items[index].isFinished = !this.items[index].isFinished
+				},
+				deleteByIndex(index) {
+					this.items.splice(index, 1);
+				},
+				selectItemByIndex(index) {
+					this.items[index].isSelected = true;
+				},
+				showAll() {
+					this.isShowAll = true;
+				},
+				showFinished() {
+					this.isShowFinished = true;
+					this.isShowAll = false;
+					this.isShowUnFinished = false;
+				},
+				showUnFinished() {
+					this.isShowAll = false;
+					this.isShowFinished = false;
+					this.isShowUnFinished = true;
+				},
+				deleteSelected() {
+					this.items = this.items.filter((item) => {
+						return item.isSelected === false
+					})
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

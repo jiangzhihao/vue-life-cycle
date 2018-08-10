@@ -178,12 +178,16 @@
 			},
 			methods: {
 				addItem() {
-					this.items.push({
-						content: this.todoItem,
-						isFinished: false,
-						isShow: true,
-						isSelected: false
-					})
+					let value = this.todoItem.trim();
+					if (value !== '') {
+						this.items.push({
+							content: value,
+							isFinished: false,
+							isShow: true,
+							isSelected: false
+						})
+					}
+					this.todoItem = '';
 				},
 				changeStateByIndex: function (index) {
 					this.items[index].isFinished = !this.items[index].isFinished

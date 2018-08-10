@@ -37,7 +37,7 @@
 						<item v-for='(item, index) in items' 
 							:item='item' 
 							:index='index' 
-							:key='Math.random()' 
+							:key='item.id' 
 							@change-state='changeStateByIndex' 
 							@delete-item='deleteByIndex'
 							@select-item='selectItemByIndex'
@@ -114,19 +114,22 @@
 						content: '任务内容',
 						isFinished: false,
 						isShow: true,
-						isSelected: false
+						isSelected: false,
+						id: new Date().toString() + '1',
 					},
 					{
 						content: '任务内容22',
 						isFinished: false,
 						isShow: true,
-						isSelected: false
+						isSelected: false,
+						id: new Date().toString() + '2',
 					},
 					{
 						content: '任务内容33',
 						isFinished: false,
 						isShow: true,
-						isSelected: false
+						isSelected: false,
+						id: new Date().toString() + '3',
 					}
 				]
 			},
@@ -181,10 +184,11 @@
 					let value = this.todoItem.trim();
 					if (value !== '') {
 						this.items.push({
-							content: value,
+							content: this.todoItem,
 							isFinished: false,
 							isShow: true,
-							isSelected: false
+							isSelected: false,
+							id: new Date().toString(),
 						})
 					}
 					this.todoItem = '';
